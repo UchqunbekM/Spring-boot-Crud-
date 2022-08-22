@@ -36,7 +36,8 @@
                     <!-- MODAL ADD FORM -->
                     <form   th:action="@{/employees-update/{id}(id=${employee.id})}"
                             th:object="${employee}"
-                            method="post">
+                            method="post"
+                            enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="exampleInputFullName" class="form-label">Full Name</label>
                             <input
@@ -46,8 +47,15 @@
                                     id="exampleInputFullName"
                                     name="fullName"
                             >
-                            <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></span>
                         </div>
+                  <div class="mb-3" >
+                <label for="exampleInputSalar" class="form-label">Image</label>
+                <input
+                        type="file"
+                        class="form-control"
+                        id="exampleInputSalar"
+                        name="file" >
+                </div>
                         <div class="mb-3">
                             <label for="exampleInputPosition" class="form-label">Position</label>
                             <select

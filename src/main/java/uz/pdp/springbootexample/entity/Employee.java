@@ -5,8 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Columns;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -25,8 +27,9 @@ public class Employee {
 
     @ManyToOne
     private Position position;
-
     private Double salary;
-
+    @Lob
+    @Column(columnDefinition = "bigint")
+    private String image;
 
 }

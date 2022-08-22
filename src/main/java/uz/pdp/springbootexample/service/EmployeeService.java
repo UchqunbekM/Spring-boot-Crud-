@@ -1,23 +1,26 @@
 package uz.pdp.springbootexample.service;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import uz.pdp.springbootexample.dto.EmployeeDto;
 import uz.pdp.springbootexample.entity.Employee;
 import uz.pdp.springbootexample.entity.Position;
 import uz.pdp.springbootexample.repository.EmployeeRepository;
 import uz.pdp.springbootexample.repository.PositionRepository;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EmployeeService {
-
-
-
     private static EmployeeRepository employeeRepository;
 private static  PositionRepository positionRepository;
 
@@ -26,35 +29,50 @@ private static  PositionRepository positionRepository;
         this.positionRepository = positionRepository;
     }
 
-    public static void update(int id, EmployeeDto employeeDto) {
+    public static void update(int id, EmployeeDto employeeDto, MultipartFile file) {
         Integer positionId = employeeDto.getPositionId();
         Optional<Position> optionalPosition = positionRepository.findById(positionId);
         if (optionalPosition.isEmpty()) {
             throw new IllegalStateException("Position not found!!");
         }
         Optional<Employee> byId = employeeRepository.findById(id);
-Employee employee=byId.get();
-        employee = Employee.builder().id(id).fullName(employeeDto.
-                        getFullName())
-                .position(optionalPosition.get())
-                .salary(employeeDto.getSalary())
-                .build();
+              Employee employee=byId.get();
+        try {
+            employee = Employee.builder().id(id).fullName(employeeDto.
+                            getFullName())
+                    .position(optionalPosition.get())
+                    .salary(employeeDto.getSalary())
+                    .image(Base64.getEncoder().encodeToString(file.getBytes()))
+                    .build();
+        } catch (IOException e) { throw new RuntimeException(e); }
         employeeRepository.save(employee);
     }
 
-    public void saveEmployee(EmployeeDto employeeDto) {
+    public void saveEmployee(MultipartFile file, EmployeeDto employeeDto) {
 
         Integer positionId = employeeDto.getPositionId();
         Optional<Position> optionalPosition = positionRepository.findById(positionId);
         if (optionalPosition.isEmpty()) {
             throw new IllegalStateException("Position not found!!");
         }
-        Employee employee = Employee
-                .builder()
-                .fullName(employeeDto.getFullName())
-                .position(optionalPosition.get())
-                .salary(employeeDto.getSalary())
-                .build();
+        String filename= StringUtils.cleanPath(file.getOriginalFilename());
+        if(filename.contains("..")){
+            System.out.println("not a valid");
+
+        }
+
+        Employee employee = null;
+        try {
+            employee = Employee
+                    .builder()
+                    .fullName(employeeDto.getFullName())
+                    .position(optionalPosition.get())
+                    .salary(employeeDto.getSalary())
+                    .image(Base64.getEncoder().encodeToString(file.getBytes()))
+                    .build();
+        } catch (IOException e)  {
+            throw new RuntimeException(e);
+        }
 
         employeeRepository.save(employee);
     }
@@ -72,4 +90,6 @@ Employee employee=byId.get();
     public Page<Employee> findAll(Pageable pageable) {
         return employeeRepository.findAll(pageable);
     }
+
+
 }

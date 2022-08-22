@@ -67,6 +67,7 @@
             <th scope="col">Full Name</th>
             <th scope="col">Position</th>
             <th scope="col">Salary</th>
+            <th scope="col">Image</th>
             <th scope="col">Action</th>
         </tr>
         </thead>
@@ -77,6 +78,8 @@
             <td th:text="${employee.fullName}"></td>
             <td th:text="${employee.position.name}"></td>
             <td th:text="${employee.salary}"></td>
+            <th scope="row"><img alt="" th:src="*{'data:image/jpeg;base64,'+{employee.image}}"
+                                 style="width: 180px;height: 85px;"></th>
             <td>
                 <a class="btn btn-warning" th:href="@{employees-update/{id}(id=${employee.id})}">Edit</a>
                 <a class="btn btn-danger" th:href="@{employees-delete/{id}(id=${employee.id})}">Delete</a>
@@ -109,7 +112,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- MODAL ADD FORM -->
-                    <form th:object="${employee}" th:action="@{/employees}" th:method="post">
+                    <form th:object="${employee}" th:action="@{/employees}" th:method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="exampleInputFullName1" class="form-label">Full Name</label>
                             <input
@@ -127,6 +130,7 @@
                                     id="exampleInputPosition1"
                                     class="form-select"
                                     aria-label="Default select example">
+
                                 <option selected>Select position:</option>
                                 <option
                                         th:each="position:${positionList}"
@@ -145,6 +149,13 @@
                                     class="form-control"
                                     id="exampleInputSalary1"
                                     name="salary">
+                        </div>  <div class="mb-3" >
+                            <label for="exampleInputSalar" class="form-label">Image</label>
+                            <input
+                                    type="file"
+                                    class="form-control"
+                                    id="exampleInputSalar"
+                                   name="file" >
                         </div>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="reset" class="btn btn-info">Reset</button>
@@ -230,5 +241,7 @@
     </div>
 
 </div>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.js"></script>
 </body>
 </html>

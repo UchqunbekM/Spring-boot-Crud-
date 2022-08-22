@@ -2,15 +2,12 @@ package uz.pdp.springbootexample.controller;
 
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import uz.pdp.springbootexample.Pager;
+import org.springframework.web.multipart.MultipartFile;
 import uz.pdp.springbootexample.dto.EmployeeDto;
 import uz.pdp.springbootexample.entity.Employee;
 import uz.pdp.springbootexample.entity.Position;
@@ -18,14 +15,12 @@ import uz.pdp.springbootexample.repository.EmployeeRepository;
 import uz.pdp.springbootexample.service.EmployeeService;
 import uz.pdp.springbootexample.service.PositionService;
 
-import javax.naming.Binding;
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class EmployeeController {
+
     private final PositionService positionService;
     private final EmployeeService employeeService;
     private int id;
@@ -52,21 +47,25 @@ public class EmployeeController {
 
     @ModelAttribute(name = "positionList")
     public List<Position> getPositionList() {
-
         return positionService.getAllPositions();
     }
+
+
+
+
     @GetMapping("/employees")
-    public String getAllEmployees(@PageableDefault (size = 4) Pageable pageable, Model model) {
+    public String getAllEmployees(@PageableDefault (size = 3) Pageable pageable, Model model) {
         Page<Employee> page=employeeService.findAll(pageable);
         model.addAttribute("page",page);
         return "employee";
     }
+
+
+
     @PostMapping("/employees")
-    public String saveEmployee(@Valid EmployeeDto employeeDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult.getAllErrors());
-        }
-        employeeService.saveEmployee(employeeDto);
+    public String saveEmployee(@Valid EmployeeDto employeeDto, @RequestParam("file") MultipartFile file) {
+
+        employeeService.saveEmployee(file, employeeDto);
         return "redirect:/employees";
     }
    @GetMapping("/employees-update/{id}")
@@ -77,8 +76,8 @@ public class EmployeeController {
    }
 
    @PostMapping("/employees-update/{id}")
-   public String update(@PathVariable  (name="id") int id, EmployeeDto employeeDto ){
-       EmployeeService.update(id, employeeDto);
+   public String update(@PathVariable  (name="id") int id, EmployeeDto employeeDto, @RequestParam("file") MultipartFile file){
+       EmployeeService.update(id, employeeDto, file);
        return "redirect:/employees";
    }
 
@@ -88,4 +87,5 @@ public class EmployeeController {
         employeeService.delete(id);
         return "redirect:/employees";
     }
+
 }

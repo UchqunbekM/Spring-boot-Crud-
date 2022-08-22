@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 import uz.pdp.springbootexample.entity.Position;
 
 import javax.persistence.*;
@@ -19,18 +20,14 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class EmployeeDto {
 
-
     private Integer id;
 
     @NotNull
     @NotBlank
     @NotEmpty(message = "Ubu narsa yoz baraka topkur....")
     private String fullName;
-
     @NotNull(message = "Position tanlash shart!!!")
     private Integer positionId;
-
     private Double salary;
-
-
+    private MultipartFile image;
 }

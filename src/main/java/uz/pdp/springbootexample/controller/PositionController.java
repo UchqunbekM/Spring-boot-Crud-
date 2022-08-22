@@ -30,7 +30,7 @@ public class PositionController {
 
     @GetMapping
     public String getAllPositions() {
-        return "employee";
+        return "employee.html";
     }
 
     @PostMapping
